@@ -22,9 +22,27 @@ async function seedAdministradores() {
 
 async function seedAlunos() {
   await Aluno.create([
-    { _id: 'aluno-ana-souza', nome: 'Ana Souza', email: 'ana.souza@example.com', matricula: '2024001', senha: SENHA_PADRAO_ALUNO },
-    { _id: 'aluno-bruno-lima', nome: 'Bruno Lima', email: 'bruno.lima@example.com', matricula: '2024002', senha: SENHA_PADRAO_ALUNO },
-    { _id: 'aluno-carla-mendes', nome: 'Carla Mendes', email: 'carla.mendes@example.com', matricula: '2024003', senha: SENHA_PADRAO_ALUNO },
+    {
+      _id: 'aluno-ana-souza',
+      nome: 'Ana Souza',
+      email: 'ana.souza@example.com',
+      matricula: '2024001',
+      senha: SENHA_PADRAO_ALUNO,
+    },
+    {
+      _id: 'aluno-bruno-lima',
+      nome: 'Bruno Lima',
+      email: 'bruno.lima@example.com',
+      matricula: '2024002',
+      senha: SENHA_PADRAO_ALUNO,
+    },
+    {
+      _id: 'aluno-carla-mendes',
+      nome: 'Carla Mendes',
+      email: 'carla.mendes@example.com',
+      matricula: '2024003',
+      senha: SENHA_PADRAO_ALUNO,
+    },
   ]);
 }
 
@@ -32,17 +50,42 @@ async function seedDisciplinas() {
   await Disciplina.create([
     { _id: 'disciplina-matematica', nome: 'Matemática', codigo: 'MAT101', cargaHoraria: 60 },
     { _id: 'disciplina-historia', nome: 'História', codigo: 'HIS101', cargaHoraria: 40 },
-    { _id: 'disciplina-programacao-web', nome: 'Programação Web', codigo: 'PRW201', cargaHoraria: 80 },
+    {
+      _id: 'disciplina-programacao-web',
+      nome: 'Programação Web',
+      codigo: 'PRW201',
+      cargaHoraria: 80,
+    },
   ]);
 }
 
 async function seedMatriculas() {
   await Matricula.create([
-    { _id: 'matricula-ana-matematica', alunoId: 'aluno-ana-souza', disciplinaId: 'disciplina-matematica' },
-    { _id: 'matricula-ana-programacao', alunoId: 'aluno-ana-souza', disciplinaId: 'disciplina-programacao-web' },
-    { _id: 'matricula-bruno-matematica', alunoId: 'aluno-bruno-lima', disciplinaId: 'disciplina-matematica' },
-    { _id: 'matricula-bruno-historia', alunoId: 'aluno-bruno-lima', disciplinaId: 'disciplina-historia' },
-    { _id: 'matricula-carla-programacao', alunoId: 'aluno-carla-mendes', disciplinaId: 'disciplina-programacao-web' },
+    {
+      _id: 'matricula-ana-matematica',
+      alunoId: 'aluno-ana-souza',
+      disciplinaId: 'disciplina-matematica',
+    },
+    {
+      _id: 'matricula-ana-programacao',
+      alunoId: 'aluno-ana-souza',
+      disciplinaId: 'disciplina-programacao-web',
+    },
+    {
+      _id: 'matricula-bruno-matematica',
+      alunoId: 'aluno-bruno-lima',
+      disciplinaId: 'disciplina-matematica',
+    },
+    {
+      _id: 'matricula-bruno-historia',
+      alunoId: 'aluno-bruno-lima',
+      disciplinaId: 'disciplina-historia',
+    },
+    {
+      _id: 'matricula-carla-programacao',
+      alunoId: 'aluno-carla-mendes',
+      disciplinaId: 'disciplina-programacao-web',
+    },
   ]);
 }
 

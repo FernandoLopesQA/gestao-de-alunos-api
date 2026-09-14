@@ -87,6 +87,9 @@ Pré-requisitos:
 # instalar dependências
 npm install
 
+# criar o arquivo de configuração local e ajustar os valores conforme seu ambiente
+cp .env.example .env
+
 # subir em modo produção
 npm start
 
@@ -99,6 +102,11 @@ ambiente `PORT`).
 
 ### Configuração do MongoDB
 
+O projeto usa **Dotenv** para carregar o arquivo `.env` ao importar a aplicação, tanto na
+execução do servidor quanto nos testes. O arquivo `.env.example` documenta `PORT`, `MONGODB_URI`
+e `JWT_SECRET`, com valores de exemplo para desenvolvimento local. Variáveis já definidas no
+ambiente têm prioridade sobre o `.env`. O arquivo `.env` é ignorado pelo Git.
+
 Por padrão, a API se conecta a um MongoDB local em
 `mongodb://127.0.0.1:27017/gestao-de-alunos`. Para usar outra instância (ex.: MongoDB Atlas ou um
 container), defina a variável de ambiente `MONGODB_URI` antes de subir o servidor:
@@ -110,6 +118,21 @@ MONGODB_URI="mongodb://usuario:senha@host:27017/nome-do-banco" npm start
 Na primeira execução com o banco vazio, a API popula automaticamente as coleções com o conjunto de
 dados fake descrito em [Dados fake pré-carregados](#dados-fake-pré-carregados). Em execuções
 seguintes, os dados já existentes são preservados.
+
+## Formatação do código
+
+O Prettier segue o estilo original do código: aspas simples, ponto e vírgula e indentação de
+dois espaços. Vírgulas finais são usadas em objetos e arrays, mas não em parâmetros de funções.
+A largura preferencial é de 100 caracteres, normalizando as quebras de linha dos arquivos.
+A configuração está em `.prettierrc.json`.
+
+```bash
+# aplicar a formatação
+npm run format
+
+# verificar a formatação sem alterar arquivos
+npm run format:check
+```
 
 ## Documentação da API (Swagger)
 
@@ -169,53 +192,53 @@ para demonstração.
 
 ### Administrador (`/api/auth/login`)
 
-| id               | nome                       | email             | senha    |
-|------------------|-----------------------------|-------------------|----------|
-| `admin-principal`| Administrador do Sistema   | admin@escola.com  | admin123 |
+| id                | nome                     | email            | senha    |
+| ----------------- | ------------------------ | ---------------- | -------- |
+| `admin-principal` | Administrador do Sistema | admin@escola.com | admin123 |
 
 ### Alunos (`/api/admin/alunos`)
 
-| id                   | nome          | email                       | matrícula | senha  |
-|----------------------|---------------|------------------------------|-----------|--------|
-| `aluno-ana-souza`    | Ana Souza     | ana.souza@example.com       | 2024001   | 123456 |
-| `aluno-bruno-lima`   | Bruno Lima    | bruno.lima@example.com      | 2024002   | 123456 |
-| `aluno-carla-mendes` | Carla Mendes  | carla.mendes@example.com    | 2024003   | 123456 |
+| id                   | nome         | email                    | matrícula | senha  |
+| -------------------- | ------------ | ------------------------ | --------- | ------ |
+| `aluno-ana-souza`    | Ana Souza    | ana.souza@example.com    | 2024001   | 123456 |
+| `aluno-bruno-lima`   | Bruno Lima   | bruno.lima@example.com   | 2024002   | 123456 |
+| `aluno-carla-mendes` | Carla Mendes | carla.mendes@example.com | 2024003   | 123456 |
 
 ### Disciplinas (`/api/admin/disciplinas`)
 
-| id                            | nome              | código  | carga horária |
-|--------------------------------|-------------------|---------|----------------|
-| `disciplina-matematica`        | Matemática        | MAT101  | 60h            |
-| `disciplina-historia`          | História          | HIS101  | 40h            |
-| `disciplina-programacao-web`   | Programação Web   | PRW201  | 80h            |
+| id                           | nome            | código | carga horária |
+| ---------------------------- | --------------- | ------ | ------------- |
+| `disciplina-matematica`      | Matemática      | MAT101 | 60h           |
+| `disciplina-historia`        | História        | HIS101 | 40h           |
+| `disciplina-programacao-web` | Programação Web | PRW201 | 80h           |
 
 ### Matrículas
 
-| aluno         | disciplina         |
-|---------------|---------------------|
-| Ana Souza     | Matemática          |
-| Ana Souza     | Programação Web     |
-| Bruno Lima    | Matemática          |
-| Bruno Lima    | História            |
-| Carla Mendes  | Programação Web     |
+| aluno        | disciplina      |
+| ------------ | --------------- |
+| Ana Souza    | Matemática      |
+| Ana Souza    | Programação Web |
+| Bruno Lima   | Matemática      |
+| Bruno Lima   | História        |
+| Carla Mendes | Programação Web |
 
 ### Notas (`/api/admin/notas`)
 
-| aluno         | disciplina         | tipo         | valor |
-|---------------|---------------------|--------------|-------|
-| Ana Souza     | Matemática          | prova        | 8.5   |
-| Ana Souza     | Programação Web     | prova        | 9.2   |
-| Bruno Lima    | Matemática          | prova        | 6.0   |
-| Bruno Lima    | História            | participação | 7.5   |
-| Carla Mendes  | Programação Web     | prova        | 10    |
+| aluno        | disciplina      | tipo         | valor |
+| ------------ | --------------- | ------------ | ----- |
+| Ana Souza    | Matemática      | prova        | 8.5   |
+| Ana Souza    | Programação Web | prova        | 9.2   |
+| Bruno Lima   | Matemática      | prova        | 6.0   |
+| Bruno Lima   | História        | participação | 7.5   |
+| Carla Mendes | Programação Web | prova        | 10    |
 
 ### Trabalhos (`/api/admin/trabalhos`)
 
-| aluno         | disciplina    | título                                  | status      |
-|---------------|---------------|-------------------------------------------|-------------|
-| Ana Souza     | Matemática    | Lista de Exercícios 1                     | entregue    |
-| Bruno Lima    | História      | Linha do Tempo - Revolução Industrial     | corrigido (nota 8.0) |
-| Carla Mendes  | Programação Web | Landing Page Responsiva                 | entregue    |
+| aluno        | disciplina      | título                                | status               |
+| ------------ | --------------- | ------------------------------------- | -------------------- |
+| Ana Souza    | Matemática      | Lista de Exercícios 1                 | entregue             |
+| Bruno Lima   | História        | Linha do Tempo - Revolução Industrial | corrigido (nota 8.0) |
+| Carla Mendes | Programação Web | Landing Page Responsiva               | entregue             |
 
 ### Exemplos rápidos de uso
 

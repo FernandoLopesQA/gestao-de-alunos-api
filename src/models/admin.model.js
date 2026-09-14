@@ -31,7 +31,8 @@ administradorSchema.pre('save', function hashSenha() {
 });
 
 const Administrador =
-  mongoose.models.Administrador || mongoose.model('Administrador', administradorSchema, 'administradores');
+  mongoose.models.Administrador ||
+  mongoose.model('Administrador', administradorSchema, 'administradores');
 
 export function sanitizeAdmin(admin) {
   if (!admin) return admin;

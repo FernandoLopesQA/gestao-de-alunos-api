@@ -70,4 +70,13 @@ export async function estaMatriculado(alunoId, disciplinaId) {
   return Boolean(await Matricula.exists({ alunoId, disciplinaId }));
 }
 
-export default { listar, buscarPorId, criar, atualizar, remover, matricular, listarAlunos, estaMatriculado };
+export default {
+  listar,
+  buscarPorId,
+  criar,
+  atualizar,
+  remover,
+  matricular,
+  listarAlunos,
+  estaMatriculado,
+};
