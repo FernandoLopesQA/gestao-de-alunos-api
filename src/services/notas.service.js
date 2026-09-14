@@ -22,13 +22,19 @@ export async function criar(dados) {
   const { alunoId, disciplinaId, valor, tipo, descricao } = dados;
 
   if (!alunoId || !disciplinaId || valor === undefined || !tipo) {
-    throw new ApiError(400, 'Os campos "alunoId", "disciplinaId", "valor" e "tipo" são obrigatórios.');
+    throw new ApiError(
+      400,
+      'Os campos "alunoId", "disciplinaId", "valor" e "tipo" são obrigatórios.'
+    );
   }
   if (typeof valor !== 'number' || valor < 0 || valor > 10) {
     throw new ApiError(400, 'O campo "valor" deve ser um número entre 0 e 10.');
   }
   if (!TIPOS_VALIDOS.includes(tipo)) {
-    throw new ApiError(400, `O campo "tipo" deve ser um dos seguintes: ${TIPOS_VALIDOS.join(', ')}.`);
+    throw new ApiError(
+      400,
+      `O campo "tipo" deve ser um dos seguintes: ${TIPOS_VALIDOS.join(', ')}.`
+    );
   }
 
   await buscarAlunoPorId(alunoId);
@@ -51,7 +57,10 @@ export async function atualizar(id, dados) {
     throw new ApiError(400, 'O campo "valor" deve ser um número entre 0 e 10.');
   }
   if (tipo !== undefined && !TIPOS_VALIDOS.includes(tipo)) {
-    throw new ApiError(400, `O campo "tipo" deve ser um dos seguintes: ${TIPOS_VALIDOS.join(', ')}.`);
+    throw new ApiError(
+      400,
+      `O campo "tipo" deve ser um dos seguintes: ${TIPOS_VALIDOS.join(', ')}.`
+    );
   }
 
   if (valor !== undefined) nota.valor = valor;

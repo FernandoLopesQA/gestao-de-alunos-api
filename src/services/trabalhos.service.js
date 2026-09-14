@@ -43,7 +43,10 @@ export async function corrigir(id, dados) {
   const { status, nota, feedback } = dados;
 
   if (status !== undefined && !STATUS_VALIDOS.includes(status)) {
-    throw new ApiError(400, `O campo "status" deve ser um dos seguintes: ${STATUS_VALIDOS.join(', ')}.`);
+    throw new ApiError(
+      400,
+      `O campo "status" deve ser um dos seguintes: ${STATUS_VALIDOS.join(', ')}.`
+    );
   }
   if (nota !== undefined && nota !== null && (typeof nota !== 'number' || nota < 0 || nota > 10)) {
     throw new ApiError(400, 'O campo "nota" deve ser um número entre 0 e 10.');

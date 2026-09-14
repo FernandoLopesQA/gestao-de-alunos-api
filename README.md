@@ -121,8 +121,10 @@ seguintes, os dados já existentes são preservados.
 
 ## Formatação do código
 
-O Prettier usa aspas simples, sem ponto e vírgula, indentação de dois espaços e largura
-preferencial de 100 caracteres. A configuração está em `.prettierrc.json`.
+O Prettier segue o estilo original do código: aspas simples, ponto e vírgula e indentação de
+dois espaços. Vírgulas finais são usadas em objetos e arrays, mas não em parâmetros de funções.
+A largura preferencial é de 100 caracteres, normalizando as quebras de linha dos arquivos.
+A configuração está em `.prettierrc.json`.
 
 ```bash
 # aplicar a formatação
