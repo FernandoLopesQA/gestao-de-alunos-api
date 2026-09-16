@@ -1,0 +1,30 @@
+[
+  {
+    "cenario": "entrega de trabalho de matemática",
+    "aluno": {
+      "nome": "Aluno Teste Matemática",
+      "email": "aluno.matematica@example.com",
+      "matricula": "TESTE-MAT",
+      "senha": "Aluno123!"
+    },
+    "trabalho": {
+      "disciplinaId": "disciplina-matematica",
+      "titulo": "Lista de exercícios",
+      "descricao": "Resolução dos exercícios de matemática."
+    }
+  },
+  {
+    "cenario": "entrega de trabalho de programação",
+    "aluno": {
+      "nome": "Aluno Teste Programação",
+      "email": "aluno.programacao@example.com",
+      "matricula": "TESTE-PROG",
+      "senha": "Aluno123!"
+    },
+    "trabalho": {
+      "disciplinaId": "disciplina-programacao-web",
+      "titulo": "Página de apresentação",
+      "descricao": "Desenvolvimento de uma página com HTML e CSS."
+    }
+  }
+]
