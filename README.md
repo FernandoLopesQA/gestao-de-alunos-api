@@ -119,6 +119,21 @@ Na primeira execução com o banco vazio, a API popula automaticamente as coleç
 dados fake descrito em [Dados fake pré-carregados](#dados-fake-pré-carregados). Em execuções
 seguintes, os dados já existentes são preservados.
 
+## Testes de API
+
+Com o MongoDB disponível e as dependências instaladas, execute `npm test`. Os testes usam
+SuperTest diretamente com a aplicação, sem precisar iniciar o servidor com `npm start`.
+
+Os helpers de autenticação ficam em `test/helpers/auth.js`:
+
+- `loginAdmin()` usa `ADMIN_EMAIL` e `ADMIN_SENHA` do ambiente, sem valores padrão. Configure
+  essas variáveis no `.env` local e nos Secrets do GitHub Actions com as credenciais do administrador
+  criado pelo seed.
+- `loginAluno({ email, senha })` recebe as credenciais do aluno que deve autenticar.
+
+Ambos validam o status 200, o token e a identidade do usuário, incluindo seu papel. Retornam
+`{ token, usuario }`; use `Bearer ${token}` no cabeçalho `Authorization` das próximas requisições.
+
 ## Formatação do código
 
 O Prettier segue o estilo original do código: aspas simples, ponto e vírgula e indentação de
