@@ -1,0 +1,27 @@
+[
+  {
+    "cenario": "aluno sem matrícula na disciplina",
+    "matricular": false,
+    "alteracoes": {},
+    "statusEsperado": 409,
+    "mensagemEsperada": "O aluno não está matriculado nesta disciplina."
+  },
+  {
+    "cenario": "título vazio",
+    "matricular": true,
+    "alteracoes": {
+      "titulo": ""
+    },
+    "statusEsperado": 400,
+    "mensagemEsperada": "Os campos \"disciplinaId\" e \"titulo\" são obrigatórios."
+  },
+  {
+    "cenario": "disciplina não informada",
+    "matricular": true,
+    "alteracoes": {
+      "disciplinaId": ""
+    },
+    "statusEsperado": 400,
+    "mensagemEsperada": "Os campos \"disciplinaId\" e \"titulo\" são obrigatórios."
+  }
+]

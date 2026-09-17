@@ -1,0 +1,31 @@
+[
+  {
+    "cenario": "credenciais válidas",
+    "alteracoes": {},
+    "statusEsperado": 200
+  },
+  {
+    "cenario": "senha incorreta",
+    "alteracoes": {
+      "senha": "senha-incorreta"
+    },
+    "statusEsperado": 401,
+    "mensagemEsperada": "E-mail ou senha inválidos."
+  },
+  {
+    "cenario": "e-mail vazio",
+    "alteracoes": {
+      "email": ""
+    },
+    "statusEsperado": 400,
+    "mensagemEsperada": "Os campos \"email\" e \"senha\" são obrigatórios."
+  },
+  {
+    "cenario": "senha vazia",
+    "alteracoes": {
+      "senha": ""
+    },
+    "statusEsperado": 400,
+    "mensagemEsperada": "Os campos \"email\" e \"senha\" são obrigatórios."
+  }
+]

@@ -1,0 +1,57 @@
+{
+  "validos": [
+    {
+      "cenario": "com carga horária",
+      "dados": {
+        "nome": "Automação de Testes",
+        "codigo": "AUT",
+        "cargaHoraria": 60
+      },
+      "statusEsperado": 201,
+      "cargaHorariaEsperada": 60
+    },
+    {
+      "cenario": "sem carga horária",
+      "dados": {
+        "nome": "Qualidade de Software",
+        "codigo": "QA"
+      },
+      "statusEsperado": 201,
+      "cargaHorariaEsperada": null
+    }
+  ],
+  "invalidos": [
+    {
+      "cenario": "nome vazio",
+      "dados": {
+        "nome": "",
+        "codigo": "AUT",
+        "cargaHoraria": 60
+      },
+      "statusEsperado": 400,
+      "mensagemEsperada": "Os campos \"nome\" e \"codigo\" são obrigatórios."
+    },
+    {
+      "cenario": "código vazio",
+      "dados": {
+        "nome": "Automação de Testes",
+        "codigo": "",
+        "cargaHoraria": 60
+      },
+      "statusEsperado": 400,
+      "mensagemEsperada": "Os campos \"nome\" e \"codigo\" são obrigatórios."
+    }
+  ],
+  "duplicados": [
+    {
+      "cenario": "código já cadastrado",
+      "dados": {
+        "nome": "Automação de Testes",
+        "codigo": "AUT",
+        "cargaHoraria": 60
+      },
+      "statusEsperado": 409,
+      "mensagemEsperada": "Já existe uma disciplina com o código \"{codigo}\"."
+    }
+  ]
+}

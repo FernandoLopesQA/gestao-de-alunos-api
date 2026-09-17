@@ -1,0 +1,14 @@
+[
+  {
+    "cenario": "e-mail já cadastrado",
+    "campo": "email",
+    "statusEsperado": 409,
+    "mensagemEsperada": "Já existe um aluno cadastrado com essa matrícula ou e-mail."
+  },
+  {
+    "cenario": "matrícula já cadastrada",
+    "campo": "matricula",
+    "statusEsperado": 409,
+    "mensagemEsperada": "Já existe um aluno cadastrado com essa matrícula ou e-mail."
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "cenario": "nome vazio",
+    "campo": "nome",
+    "valor": "",
+    "statusEsperado": 400,
+    "mensagemEsperada": "Os campos \"nome\", \"email\", \"matricula\" e \"senha\" são obrigatórios."
+  },
+  {
+    "cenario": "e-mail vazio",
+    "campo": "email",
+    "valor": "",
+    "statusEsperado": 400,
+    "mensagemEsperada": "Os campos \"nome\", \"email\", \"matricula\" e \"senha\" são obrigatórios."
+  },
+  {
+    "cenario": "matrícula vazia",
+    "campo": "matricula",
+    "valor": "",
+    "statusEsperado": 400,
+    "mensagemEsperada": "Os campos \"nome\", \"email\", \"matricula\" e \"senha\" são obrigatórios."
+  },
+  {
+    "cenario": "senha vazia",
+    "campo": "senha",
+    "valor": "",
+    "statusEsperado": 400,
+    "mensagemEsperada": "Os campos \"nome\", \"email\", \"matricula\" e \"senha\" são obrigatórios."
+  }
+]
