@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
-import request from 'supertest';
 import { expect } from 'chai';
-import app from '../src/app.js';
+import { api } from './helpers/api.js';
 import { loginAdmin, loginAluno } from './helpers/auth.js';
+import { cadastrarAluno } from './helpers/alunos.js';
+import { matricularAluno } from './helpers/matriculas.js';
 
 const cenarios = JSON.parse(
   readFileSync(new URL('./fixtures/alunos.json', import.meta.url), 'utf8')
@@ -22,10 +23,7 @@ describe('Fluxo de entrega de trabalho pelo aluno', () => {
 
       const { token } = await loginAdmin();
 
-      const resposta = await request(app)
-        .post('/api/admin/alunos')
-        .set('Authorization', `Bearer ${token}`)
-        .send(aluno);
+      const resposta = await cadastrarAluno(aluno, token);
 
       expect(resposta.status).to.equal(201);
       expect(resposta.body.id).to.be.a('string').and.not.be.empty;
@@ -41,10 +39,7 @@ describe('Fluxo de entrega de trabalho pelo aluno', () => {
       const alunoId = resposta.body.id;
       const disciplinaId = cenario.trabalho.disciplinaId;
 
-      const respostaMatricula = await request(app)
-        .post(`/api/admin/disciplinas/${disciplinaId}/matriculas`)
-        .set('Authorization', `Bearer ${token}`)
-        .send({ alunoId });
+      const respostaMatricula = await matricularAluno(alunoId, disciplinaId, token);
 
       expect(respostaMatricula.status).to.equal(201);
       expect(respostaMatricula.body).to.include({
@@ -58,7 +53,7 @@ describe('Fluxo de entrega de trabalho pelo aluno', () => {
       expect(usuario.id).to.equal(alunoId);
 
       // Entregar o trabalho usando o token do aluno
-      const respostaTrabalho = await request(app)
+      const respostaTrabalho = await api()
         .post(`/api/alunos/${alunoId}/trabalhos`)
         .set('Authorization', `Bearer ${tokenAluno}`)
         .send(cenario.trabalho);
