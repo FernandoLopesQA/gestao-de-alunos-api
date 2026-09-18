@@ -1,8 +1,7 @@
-import request from 'supertest';
-import app from '../../src/app.js';
+import { api } from './api.js';
 
 export async function matricularAluno(alunoId, disciplinaId, tokenAdmin) {
-  return request(app)
+  return api()
     .post(`/api/admin/disciplinas/${disciplinaId}/matriculas`)
     .set('Authorization', `Bearer ${tokenAdmin}`)
     .send({ alunoId });
