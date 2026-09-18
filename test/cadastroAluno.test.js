@@ -1,72 +1,90 @@
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { expect } from 'chai';
-import { api } from './helpers/api.js';
-import { loginAdmin, loginAluno } from './helpers/auth.js';
+import { loginAdmin } from './helpers/auth.js';
 import { cadastrarAluno } from './helpers/alunos.js';
-import { matricularAluno } from './helpers/matriculas.js';
 
-const cenarios = JSON.parse(
-  readFileSync(new URL('./fixtures/alunos.json', import.meta.url), 'utf8')
+const cenariosValidos = JSON.parse(
+  readFileSync(new URL('./fixtures/cadastro-aluno.json', import.meta.url), 'utf8')
 );
 
-describe('Fluxo de entrega de trabalho pelo aluno', () => {
-  for (const cenario of cenarios) {
-    it(`deve concluir o fluxo de ${cenario.cenario}`, async () => {
-      const identificador = randomUUID();
+const cenariosInvalidos = JSON.parse(
+  readFileSync(new URL('./fixtures/cadastro-aluno-invalido.json', import.meta.url), 'utf8')
+);
 
-      const aluno = {
-        ...cenario.aluno,
-        email: cenario.aluno.email.replace('@', `+${identificador}@`),
-        matricula: `${cenario.aluno.matricula}-${identificador}`,
-      };
+const cenariosDuplicados = JSON.parse(
+  readFileSync(new URL('./fixtures/cadastro-aluno-duplicado.json', import.meta.url), 'utf8')
+);
 
-      const { token } = await loginAdmin();
+function prepararAluno(dados) {
+  const identificador = randomUUID();
 
-      const resposta = await cadastrarAluno(aluno, token);
+  return {
+    ...dados,
+    email: dados.email.replace('@', `+${identificador}@`),
+    matricula: `${dados.matricula}-${identificador}`,
+  };
+}
 
-      expect(resposta.status).to.equal(201);
-      expect(resposta.body.id).to.be.a('string').and.not.be.empty;
-      expect(resposta.body).to.include({
-        nome: aluno.nome,
-        email: aluno.email,
-        matricula: aluno.matricula,
-        role: 'aluno',
+describe('Cadastro de aluno', () => {
+  let tokenAdmin;
+
+  before(async () => {
+    const { token } = await loginAdmin();
+    tokenAdmin = token;
+  });
+
+  describe('Dados válidos', () => {
+    for (const cenario of cenariosValidos) {
+      it(`deve cadastrar ${cenario.aluno.nome}`, async () => {
+        const aluno = prepararAluno(cenario.aluno);
+
+        const resposta = await cadastrarAluno(aluno, tokenAdmin);
+
+        expect(resposta.status).to.equal(201);
+        expect(resposta.body.id).to.be.a('string').and.not.be.empty;
+        expect(resposta.body).to.include({
+          nome: aluno.nome,
+          email: aluno.email,
+          matricula: aluno.matricula,
+          role: 'aluno',
+        });
+        expect(resposta.body).not.to.have.property('senha');
       });
-      expect(resposta.body).not.to.have.property('senha');
+    }
+  });
 
-      // Matricular o aluno usando o token do administrador
-      const alunoId = resposta.body.id;
-      const disciplinaId = cenario.trabalho.disciplinaId;
+  describe('Dados inválidos', () => {
+    for (const cenario of cenariosInvalidos) {
+      it(`deve rejeitar cadastro com ${cenario.cenario}`, async () => {
+        const aluno = prepararAluno(cenariosValidos[0].aluno);
+        aluno[cenario.campo] = cenario.valor;
 
-      const respostaMatricula = await matricularAluno(alunoId, disciplinaId, token);
+        const resposta = await cadastrarAluno(aluno, tokenAdmin);
 
-      expect(respostaMatricula.status).to.equal(201);
-      expect(respostaMatricula.body).to.include({
-        alunoId,
-        disciplinaId,
+        expect(resposta.status).to.equal(cenario.statusEsperado);
+        expect(resposta.body.error).to.equal(cenario.mensagemEsperada);
       });
+    }
+  });
 
-      // Autenticar o aluno recém-cadastrado
-      const { token: tokenAluno, usuario } = await loginAluno(aluno);
+  describe('Dados duplicados', () => {
+    for (const cenario of cenariosDuplicados) {
+      it(`deve rejeitar cadastro com ${cenario.cenario}`, async () => {
+        const alunoExistente = prepararAluno(cenariosValidos[0].aluno);
 
-      expect(usuario.id).to.equal(alunoId);
+        const respostaInicial = await cadastrarAluno(alunoExistente, tokenAdmin);
 
-      // Entregar o trabalho usando o token do aluno
-      const respostaTrabalho = await api()
-        .post(`/api/alunos/${alunoId}/trabalhos`)
-        .set('Authorization', `Bearer ${tokenAluno}`)
-        .send(cenario.trabalho);
+        expect(respostaInicial.status).to.equal(201);
 
-      expect(respostaTrabalho.status).to.equal(201);
-      expect(respostaTrabalho.body.id).to.be.a('string').and.not.be.empty;
-      expect(respostaTrabalho.body).to.include({
-        alunoId,
-        disciplinaId,
-        titulo: cenario.trabalho.titulo,
-        descricao: cenario.trabalho.descricao,
-        status: 'entregue',
+        const novoAluno = prepararAluno(cenariosValidos[0].aluno);
+        novoAluno[cenario.campo] = alunoExistente[cenario.campo];
+
+        const resposta = await cadastrarAluno(novoAluno, tokenAdmin);
+
+        expect(resposta.status).to.equal(cenario.statusEsperado);
+        expect(resposta.body.error).to.equal(cenario.mensagemEsperada);
       });
-    });
-  }
+    }
+  });
 });

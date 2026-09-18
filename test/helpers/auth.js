@@ -1,9 +1,8 @@
-import request from 'supertest';
 import { expect } from 'chai';
-import app from '../../src/app.js';
+import { api } from './api.js';
 
 async function login({ email, senha }, role) {
-  const resposta = await request(app).post('/api/auth/login').send({ email, senha });
+  const resposta = await api().post('/api/auth/login').send({ email, senha });
 
   expect(resposta.status, `Login de ${role}`).to.equal(200);
   expect(resposta.body.token).to.be.a('string').and.not.be.empty;

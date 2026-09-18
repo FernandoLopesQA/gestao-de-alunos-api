@@ -41,6 +41,9 @@ banco está vazio (veja [Dados fake pré-carregados](#dados-fake-pré-carregados
 - **morgan** — log de requisições HTTP no console
 - **nodemon** (dependência de desenvolvimento) — reinício automático do servidor durante o
   desenvolvimento
+- **Mocha**, **SuperTest** e **Chai** — execução dos testes de API, requisições HTTP e validações
+- **Dotenv** — carregamento das variáveis de ambiente do arquivo `.env`
+- **Prettier** — padronização da formatação do código
 
 A autenticação é real: senhas com hash (bcrypt) e sessões via JWT assinado.
 
@@ -80,7 +83,7 @@ docs/
 
 Pré-requisitos:
 
-- Node.js 18+ (usa `crypto.randomUUID`, disponível nativamente).
+- Node.js 20.19.0 ou superior (requisito da versão de Mongoose utilizada).
 - Uma instância do **MongoDB** acessível (local ou remota).
 
 ```bash
@@ -121,8 +124,98 @@ seguintes, os dados já existentes são preservados.
 
 ## Testes de API
 
-Com o MongoDB disponível e as dependências instaladas, execute `npm test`. Os testes usam
-SuperTest diretamente com a aplicação, sem precisar iniciar o servidor com `npm start`.
+Os testes usam **Mocha**, **SuperTest** e **Chai**, com **Data-Driven Testing (DDT)** a partir de
+arquivos JSON. O SuperTest faz requisições diretamente à aplicação Express; não é necessário
+executar `npm start`, mas uma instância real do MongoDB deve estar disponível.
+
+### Execução local
+
+Após instalar as dependências e copiar `.env.example` para `.env`, configure as variáveis:
+
+```dotenv
+MONGODB_URI=mongodb://127.0.0.1:27017/gestao-de-alunos-test
+ADMIN_EMAIL=admin@escola.com
+ADMIN_SENHA=admin123
+```
+
+As credenciais acima são as de demonstração do administrador criado pelo seed. As variáveis
+`ADMIN_EMAIL` e `ADMIN_SENHA` são usadas pelos testes para autenticar; não alteram o cadastro do
+administrador. Use um banco dedicado aos testes, como o indicado no exemplo.
+
+```bash
+# executar todas as suítes
+npm test
+
+# executar somente a suíte de cadastro de alunos
+npm test -- --grep "Cadastro de aluno"
+```
+
+Se ocorrer `ECONNREFUSED 127.0.0.1:27017`, verifique se o MongoDB está iniciado e se
+`MONGODB_URI` aponta para a instância correta. O `npm install` instala as dependências Node.js,
+mas não instala o servidor MongoDB.
+
+### Organização dos testes
+
+```text
+test/
+  auth-admin.test.js          # autenticação do administrador
+  auth-aluno.test.js          # autenticação do aluno
+  cadastroAluno.test.js       # cadastro de alunos
+  cadastroDisciplina.test.js  # cadastro de disciplinas
+  entregaDeTrabalho.test.js   # fluxo completo e falhas na entrega
+  setup.js                   # encerra a conexão com MongoDB após todas as suítes
+  helpers/
+    api.js                   # cliente SuperTest para a aplicação
+    auth.js                  # login de administrador e aluno
+    alunos.js                # cadastro de aluno
+    disciplinas.js           # cadastro de disciplina
+    matriculas.js            # matrícula em disciplina
+  fixtures/
+    cadastro-aluno.json
+    cadastro-aluno-invalido.json
+    cadastro-aluno-duplicado.json
+    cadastro-disciplina.json
+    login-admin.json
+    login-aluno.json
+    entrega-trabalho-valida.json
+    entrega-trabalho-invalida.json
+```
+
+### Cenários automatizados
+
+A suíte contém **26 cenários**, organizados por funcionalidade:
+
+| Suíte                         | Quantidade | Cenários                                                                                      |
+| ----------------------------- | ---------: | --------------------------------------------------------------------------------------------- |
+| Autenticação do administrador |          4 | Credenciais válidas, senha incorreta, e-mail vazio e senha vazia                              |
+| Autenticação do aluno         |          4 | Credenciais válidas, senha incorreta, e-mail vazio e senha vazia                              |
+| Cadastro de aluno             |          8 | Dois cadastros válidos; nome, e-mail, matrícula e senha vazios; e-mail e matrícula duplicados |
+| Cadastro de disciplina        |          5 | Cadastro com e sem carga horária; nome e código vazios; código duplicado                      |
+| Entrega de trabalho           |          5 | Dois fluxos completos; aluno sem matrícula, título vazio e disciplina não informada           |
+
+Os fluxos completos autenticam o administrador, cadastram e matriculam um aluno, autenticam esse
+aluno e registram a entrega usando seu token. As validações incluem status HTTP, dados retornados,
+mensagens de erro, papel do usuário e ausência de senha ou token nas respostas pertinentes.
+
+### Dados e helpers
+
+Os arquivos em `test/fixtures/` fornecem os dados de entrada e, nos cenários que os definem,
+os status e mensagens esperados. Os grupos com múltiplos cenários usam loops para gerar um teste
+por conjunto de dados, aplicando DDT. Os logins positivos e o cenário de código de disciplina
+duplicado são testes diretos, sem loop; a duplicidade continua usando dados do JSON.
+As credenciais válidas do administrador vêm das variáveis de ambiente; os dados dos alunos nos
+JSONs são fictícios.
+
+E-mail, matrícula e código de disciplina recebem UUIDs para evitar conflitos entre execuções.
+Nos testes de duplicidade, o campo em avaliação é repetido propositalmente após um cadastro válido.
+Cada suíte prepara os registros de que precisa, sem depender da execução de outro arquivo.
+Os testes de entrega usam as disciplinas de matemática e programação web criadas pelo seed.
+
+Os registros criados permanecem no banco após a execução. O `test/setup.js` encerra a conexão;
+ele não remove os dados.
+
+Todos os helpers de requisição usam `api()`, definido em `test/helpers/api.js`, que centraliza
+os imports do SuperTest e da aplicação Express.
 
 Os helpers de autenticação ficam em `test/helpers/auth.js`:
 
@@ -133,6 +226,23 @@ Os helpers de autenticação ficam em `test/helpers/auth.js`:
 
 Ambos validam o status 200, o token e a identidade do usuário, incluindo seu papel. Retornam
 `{ token, usuario }`; use `Bearer ${token}` no cabeçalho `Authorization` das próximas requisições.
+
+Os helpers `cadastrarAluno()`, `cadastrarDisciplina()` e `matricularAluno()` recebem o token
+sem o prefixo `Bearer` e retornam a resposta HTTP completa. As validações ficam nos testes,
+permitindo reutilizar essas funções em cenários positivos e negativos.
+
+### GitHub Actions
+
+O workflow [tests.yml](.github/workflows/tests.yml) executa em pushes para `main` e em pull requests
+com destino à `main`. Ele configura Node.js 20, inicia um serviço MongoDB 7, aguarda a verificação
+de saúde do banco, instala as dependências com `npm ci` e executa `npm test`.
+
+Configure os Secrets de repositório `ADMIN_EMAIL` e `ADMIN_SENHA` em
+**Settings → Secrets and variables → Actions**, usando as credenciais do administrador do seed.
+O workflow disponibiliza esses valores como variáveis de ambiente e define `MONGODB_URI` para
+o banco `gestao-de-alunos-test` do serviço MongoDB. O arquivo `.env` local não é enviado ao GitHub.
+
+O resultado de cada execução pode ser consultado na aba **Actions** e nas verificações do PR.
 
 ## Formatação do código
 
