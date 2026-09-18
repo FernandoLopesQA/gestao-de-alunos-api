@@ -6,24 +6,28 @@ import { loginAdmin, loginAluno } from './helpers/auth.js';
 import { cadastrarAluno } from './helpers/alunos.js';
 import { matricularAluno } from './helpers/matriculas.js';
 
-const cenarios = JSON.parse(
-  readFileSync(new URL('./fixtures/alunos.json', import.meta.url), 'utf8')
+const cenariosValidos = JSON.parse(
+  readFileSync(new URL('./fixtures/entrega-trabalho-valida.json', import.meta.url), 'utf8')
 );
 
 const cenariosInvalidos = JSON.parse(
   readFileSync(new URL('./fixtures/entrega-trabalho-invalida.json', import.meta.url), 'utf8')
 );
 
-describe('Fluxo de entrega de trabalho pelo aluno', () => {
-  for (const cenario of cenarios) {
-    it(`deve concluir o fluxo de ${cenario.cenario}`, async () => {
-      const identificador = randomUUID();
+function prepararAluno(dados) {
+  const identificador = randomUUID();
 
-      const aluno = {
-        ...cenario.aluno,
-        email: cenario.aluno.email.replace('@', `+${identificador}@`),
-        matricula: `${cenario.aluno.matricula}-${identificador}`,
-      };
+  return {
+    ...dados,
+    email: dados.email.replace('@', `+${identificador}@`),
+    matricula: `${dados.matricula}-${identificador}`,
+  };
+}
+
+describe('Fluxo de entrega de trabalho pelo aluno', () => {
+  for (const cenario of cenariosValidos) {
+    it(`deve concluir o fluxo de ${cenario.cenario}`, async () => {
+      const aluno = prepararAluno(cenario.aluno);
 
       const { token } = await loginAdmin();
 
@@ -78,14 +82,8 @@ describe('Fluxo de entrega de trabalho pelo aluno', () => {
 describe('Entrega de trabalho — cenários inválidos', () => {
   for (const cenario of cenariosInvalidos) {
     it(`deve rejeitar entrega com ${cenario.cenario}`, async () => {
-      const base = cenarios[0];
-      const identificador = randomUUID();
-
-      const aluno = {
-        ...base.aluno,
-        email: base.aluno.email.replace('@', `+${identificador}@`),
-        matricula: `${base.aluno.matricula}-${identificador}`,
-      };
+      const base = cenariosValidos[0];
+      const aluno = prepararAluno(base.aluno);
 
       const { token: tokenAdmin } = await loginAdmin();
       const respostaCadastro = await cadastrarAluno(aluno, tokenAdmin);

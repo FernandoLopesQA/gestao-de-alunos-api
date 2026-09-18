@@ -42,16 +42,14 @@
       "mensagemEsperada": "Os campos \"nome\" e \"codigo\" são obrigatórios."
     }
   ],
-  "duplicados": [
-    {
-      "cenario": "código já cadastrado",
-      "dados": {
-        "nome": "Automação de Testes",
-        "codigo": "AUT",
-        "cargaHoraria": 60
-      },
-      "statusEsperado": 409,
-      "mensagemEsperada": "Já existe uma disciplina com o código \"{codigo}\"."
-    }
-  ]
+  "duplicado": {
+    "cenario": "código já cadastrado",
+    "dados": {
+      "nome": "Automação de Testes",
+      "codigo": "AUT",
+      "cargaHoraria": 60
+    },
+    "statusEsperado": 409,
+    "mensagemEsperada": "Já existe uma disciplina com o código \"{codigo}\"."
+  }
 }

@@ -5,7 +5,7 @@ import { loginAdmin } from './helpers/auth.js';
 import { cadastrarAluno } from './helpers/alunos.js';
 
 const cenariosValidos = JSON.parse(
-  readFileSync(new URL('./fixtures/alunos.json', import.meta.url), 'utf8')
+  readFileSync(new URL('./fixtures/cadastro-aluno.json', import.meta.url), 'utf8')
 );
 
 const cenariosInvalidos = JSON.parse(

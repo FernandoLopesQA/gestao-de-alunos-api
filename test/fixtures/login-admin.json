@@ -1,11 +1,4 @@
 {
-  "validos": [
-    {
-      "cenario": "credenciais válidas",
-      "alteracoes": {},
-      "statusEsperado": 200
-    }
-  ],
   "invalidos": [
     {
       "cenario": "senha incorreta",

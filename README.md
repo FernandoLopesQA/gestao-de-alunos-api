@@ -171,12 +171,13 @@ test/
     disciplinas.js           # cadastro de disciplina
     matriculas.js            # matrícula em disciplina
   fixtures/
-    alunos.json
+    cadastro-aluno.json
     cadastro-aluno-invalido.json
     cadastro-aluno-duplicado.json
     cadastro-disciplina.json
     login-admin.json
     login-aluno.json
+    entrega-trabalho-valida.json
     entrega-trabalho-invalida.json
 ```
 

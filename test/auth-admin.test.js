@@ -13,26 +13,21 @@ describe('Autenticação do administrador', () => {
   });
 
   describe('Credenciais válidas', () => {
-    for (const cenario of cenarios.validos) {
-      it(`deve autenticar com ${cenario.cenario}`, async () => {
-        const resposta = await api()
-          .post('/api/auth/login')
-          .send({
-            email: process.env.ADMIN_EMAIL,
-            senha: process.env.ADMIN_SENHA,
-            ...cenario.alteracoes,
-          });
-
-        expect(resposta.status).to.equal(cenario.statusEsperado);
-        expect(resposta.body.token).to.be.a('string').and.not.be.empty;
-        expect(resposta.body.usuario.id).to.be.a('string').and.not.be.empty;
-        expect(resposta.body.usuario).to.include({
-          email: process.env.ADMIN_EMAIL,
-          role: 'admin',
-        });
-        expect(resposta.body.usuario).not.to.have.property('senha');
+    it('deve autenticar o administrador com credenciais válidas', async () => {
+      const resposta = await api().post('/api/auth/login').send({
+        email: process.env.ADMIN_EMAIL,
+        senha: process.env.ADMIN_SENHA,
       });
-    }
+
+      expect(resposta.status).to.equal(200);
+      expect(resposta.body.token).to.be.a('string').and.not.be.empty;
+      expect(resposta.body.usuario.id).to.be.a('string').and.not.be.empty;
+      expect(resposta.body.usuario).to.include({
+        email: process.env.ADMIN_EMAIL,
+        role: 'admin',
+      });
+      expect(resposta.body.usuario).not.to.have.property('senha');
+    });
   });
 
   describe('Credenciais inválidas', () => {

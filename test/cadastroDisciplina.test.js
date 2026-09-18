@@ -55,21 +55,20 @@ describe('Cadastro de disciplina', () => {
   });
 
   describe('Dados duplicados', () => {
-    for (const cenario of cenarios.duplicados) {
-      it(`deve rejeitar cadastro com ${cenario.cenario}`, async () => {
-        const disciplina = prepararDisciplina(cenario.dados);
+    it('deve rejeitar cadastro com código já cadastrado', async () => {
+      const cenario = cenarios.duplicado;
+      const disciplina = prepararDisciplina(cenario.dados);
 
-        const respostaInicial = await cadastrarDisciplina(disciplina, tokenAdmin);
+      const respostaInicial = await cadastrarDisciplina(disciplina, tokenAdmin);
 
-        expect(respostaInicial.status).to.equal(201);
+      expect(respostaInicial.status).to.equal(201);
 
-        const resposta = await cadastrarDisciplina(disciplina, tokenAdmin);
+      const resposta = await cadastrarDisciplina(disciplina, tokenAdmin);
 
-        const mensagemEsperada = cenario.mensagemEsperada.replace('{codigo}', disciplina.codigo);
+      const mensagemEsperada = cenario.mensagemEsperada.replace('{codigo}', disciplina.codigo);
 
-        expect(resposta.status).to.equal(cenario.statusEsperado);
-        expect(resposta.body.error).to.equal(mensagemEsperada);
-      });
-    }
+      expect(resposta.status).to.equal(cenario.statusEsperado);
+      expect(resposta.body.error).to.equal(mensagemEsperada);
+    });
   });
 });

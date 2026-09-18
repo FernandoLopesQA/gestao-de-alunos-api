@@ -1,0 +1,18 @@
+[
+  {
+    "aluno": {
+      "nome": "Aluno Teste Cadastro Um",
+      "email": "cadastro.um@example.com",
+      "matricula": "CAD-001",
+      "senha": "Aluno123!"
+    }
+  },
+  {
+    "aluno": {
+      "nome": "Aluno Teste Cadastro Dois",
+      "email": "cadastro.dois@example.com",
+      "matricula": "CAD-002",
+      "senha": "Aluno123!"
+    }
+  }
+]
