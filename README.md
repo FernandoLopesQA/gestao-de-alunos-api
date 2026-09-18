@@ -200,8 +200,11 @@ mensagens de erro, papel do usuário e ausência de senha ou token nas respostas
 ### Dados e helpers
 
 Os arquivos em `test/fixtures/` fornecem os dados de entrada e, nos cenários que os definem,
-os status e mensagens esperados. Cada cenário do JSON gera um teste. As credenciais válidas do
-administrador vêm das variáveis de ambiente; os dados dos alunos nos JSONs são fictícios.
+os status e mensagens esperados. Os grupos com múltiplos cenários usam loops para gerar um teste
+por conjunto de dados, aplicando DDT. Os logins positivos e o cenário de código de disciplina
+duplicado são testes diretos, sem loop; a duplicidade continua usando dados do JSON.
+As credenciais válidas do administrador vêm das variáveis de ambiente; os dados dos alunos nos
+JSONs são fictícios.
 
 E-mail, matrícula e código de disciplina recebem UUIDs para evitar conflitos entre execuções.
 Nos testes de duplicidade, o campo em avaliação é repetido propositalmente após um cadastro válido.
@@ -210,6 +213,9 @@ Os testes de entrega usam as disciplinas de matemática e programação web cria
 
 Os registros criados permanecem no banco após a execução. O `test/setup.js` encerra a conexão;
 ele não remove os dados.
+
+Todos os helpers de requisição usam `api()`, definido em `test/helpers/api.js`, que centraliza
+os imports do SuperTest e da aplicação Express.
 
 Os helpers de autenticação ficam em `test/helpers/auth.js`:
 
